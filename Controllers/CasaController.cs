@@ -21,12 +21,19 @@ namespace NN_Inmuebles.Controllers
         }
 
         // GET: Casa
-        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return _context.Casa != null ? 
                         View(await _context.Casa.ToListAsync()) :
                         Problem("Entity set 'NN_InmueblesContext.Casa'  is null.");
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> IndexAnon()
+        {
+            var nN_InmueblesContext = _context.Casa.Where(a => a.Alquilada == false && a.Eliminada == false);
+            return View(await nN_InmueblesContext.ToListAsync());
+
         }
 
         // GET: Casa/Create
