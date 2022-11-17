@@ -1,5 +1,8 @@
 @model IEnumerable<NN_Inmuebles.Models.Casa>
 
+@{
+    ViewData["Title"] = "Casas";
+}
 
 <!DOCTYPE html>
 
@@ -10,7 +13,7 @@
 </head>
 <body>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="Create">Crear Nuevo</a>
 </p>
 <table class="table">
     <thead>
@@ -48,8 +51,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.NombreDueño)
             </td>
-            <td>
-                @* @Html.DisplayFor(modelItem => item.ImagenCasa) *@    
+            <td>  
                 @{
                     var base64 = Convert.ToBase64String(item.ImagenCasa);
                     var imgSrc = String.Format("data:image/png;base64,{0}", base64);
@@ -57,14 +59,14 @@
                 <img class="Img" src="@imgSrc" />
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Alquilada)
+                @(item.Alquilada?"Alquilada😔":"Disponible😁")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Eliminada)
+                @(item.Eliminada?"Elminada❌":"🏡🏘🏚🏰🏯")
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.CasaID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CasaID">Delete</a>
+                <a class="btn btn-success" asp-action="Edit" asp-route-id="@item.CasaID">Editar</a> |
+                <a class="btn btn-danger" onclick="eliminarCasa(@item.CasaID)">Eliminar</a>
             </td>
         </tr>
 }
