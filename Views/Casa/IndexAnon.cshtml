@@ -12,9 +12,6 @@
     <title>Index</title>
 </head>
 <body>
-<p>
-    <a class="btn btn-primary" asp-action="Create">Crear Nuevo</a>
-</p>
 <table class="table table-dark table-hover">
     <thead>
         <tr>
@@ -33,10 +30,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Alquilada)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Eliminada)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -60,13 +53,6 @@
             </td>
             <td>
                 @(item.Alquilada?"Alquilada😔":"Disponible😁")
-            </td>
-            <td>
-                @(item.Eliminada?"Elminada❌":"🏡🏘🏚🏰🏯")
-            </td>
-            <td>
-                <a class="btn btn-success" asp-action="Edit" asp-route-id="@item.CasaID">Editar</a> |
-                <a class="btn btn-danger" onclick="eliminarCasa(@item.CasaID)">Eliminar</a>
             </td>
         </tr>
 }
