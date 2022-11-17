@@ -54,6 +54,9 @@ footer{
   color: white;
   border-radius: 10px 25px;
 }
+.RowCreate .form-floating{
+  color: #000000;
+}
 .Blanco{
   color: aliceblue;
 }
