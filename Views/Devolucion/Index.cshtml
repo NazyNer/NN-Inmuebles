@@ -1,0 +1,65 @@
+@model IEnumerable<NN_Inmuebles.Models.Devolucion>
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaDevolucion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClienteNombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CasaID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CasaNombre)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaDevolucion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cliente.ClienteID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClienteNombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CasaID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CasaNombre)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.DevolucionID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.DevolucionID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.DevolucionID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</body>
+</html>
