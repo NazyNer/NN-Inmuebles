@@ -23,28 +23,11 @@ namespace NN_Inmuebles.Controllers
         // GET: Cliente
         public async Task<IActionResult> Index()
         {
-              return _context.Cliente != null ? 
-                          View(await _context.Cliente.ToListAsync()) :
-                          Problem("Entity set 'NN_InmueblesContext.Cliente'  is null.");
+            return _context.Cliente != null ? 
+                        View(await _context.Cliente.ToListAsync()) :
+                        Problem("Entity set 'NN_InmueblesContext.Cliente'  is null.");
         }
 
-        // GET: Cliente/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Cliente == null)
-            {
-                return NotFound();
-            }
-
-            var cliente = await _context.Cliente
-                .FirstOrDefaultAsync(m => m.ClienteID == id);
-            if (cliente == null)
-            {
-                return NotFound();
-            }
-
-            return View(cliente);
-        }
 
         // GET: Cliente/Create
         public IActionResult Create()
@@ -119,46 +102,35 @@ namespace NN_Inmuebles.Controllers
             return View(cliente);
         }
 
-        // GET: Cliente/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Cliente == null)
-            {
-                return NotFound();
-            }
-
-            var cliente = await _context.Cliente
-                .FirstOrDefaultAsync(m => m.ClienteID == id);
-            if (cliente == null)
-            {
-                return NotFound();
-            }
-
-            return View(cliente);
-        }
 
         // POST: Cliente/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
             if (_context.Cliente == null)
             {
-                return Problem("Entity set 'NN_InmueblesContext.Cliente'  is null.");
+                return Problem("'NN_InmueblesContext.Cliente'  es nulo.");
             }
             var cliente = await _context.Cliente.FindAsync(id);
             if (cliente != null)
             {
-                _context.Cliente.Remove(cliente);
+                var clienteAlquiler = (from a in _context.Alquiler where a.ClienteID == id select a).Count();
+                if(clienteAlquiler == 0)
+                {
+                    _context.Cliente.Remove(cliente);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+
+                }
             }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ClienteExists(int id)
         {
-          return (_context.Cliente?.Any(e => e.ClienteID == id)).GetValueOrDefault();
+            return (_context.Cliente?.Any(e => e.ClienteID == id)).GetValueOrDefault();
         }
     }
 }

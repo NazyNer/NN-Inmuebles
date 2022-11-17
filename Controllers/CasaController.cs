@@ -24,27 +24,9 @@ namespace NN_Inmuebles.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-              return _context.Casa != null ? 
-                          View(await _context.Casa.ToListAsync()) :
-                          Problem("Entity set 'NN_InmueblesContext.Casa'  is null.");
-        }
-
-        // GET: Casa/Details/5
-        public async Task<IActionResult> Details(int id)
-        {
-            if (id == null || _context.Casa == null)
-            {
-                return NotFound();
-            }
-
-            var casa = await _context.Casa
-                .FirstOrDefaultAsync(m => m.CasaID == id);
-            if (casa == null)
-            {
-                return NotFound();
-            }
-
-            return View(casa);
+            return _context.Casa != null ? 
+                        View(await _context.Casa.ToListAsync()) :
+                        Problem("Entity set 'NN_InmueblesContext.Casa'  is null.");
         }
 
         // GET: Casa/Create
@@ -81,7 +63,7 @@ namespace NN_Inmuebles.Controllers
         }
 
         // GET: Casa/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Casa == null)
             {
@@ -101,7 +83,7 @@ namespace NN_Inmuebles.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CasaId,NombreCasa,Domicilio,NombreDueño,ImagenCasa,Alquilada,Eliminada")] Casa casa)
+        public async Task<IActionResult> Edit(int id, [Bind("CasaID,NombreCasa,Domicilio,NombreDueño,ImagenCasa,Alquilada,Eliminada")] Casa casa, IFormFile ImagenCasa)
         {
             if (id != casa.CasaID)
             {
@@ -112,6 +94,17 @@ namespace NN_Inmuebles.Controllers
             {
                 try
                 {
+                    if(ImagenCasa != null && ImagenCasa.Length > 0)
+                    {
+                        byte[]? CasaImagen = null;
+                        using(var fs1 = ImagenCasa.OpenReadStream())
+                        using(var ms1 = new MemoryStream())
+                        {
+                            fs1.CopyTo(ms1);
+                            CasaImagen = ms1.ToArray();
+                        }
+                        casa.ImagenCasa = CasaImagen;
+                    }
                     _context.Update(casa);
                     await _context.SaveChangesAsync();
                 }
@@ -131,46 +124,41 @@ namespace NN_Inmuebles.Controllers
             return View(casa);
         }
 
-        // GET: Casa/Delete/5
-        public async Task<IActionResult> Delete(int id)
-        {
-            if (id == null || _context.Casa == null)
-            {
-                return NotFound();
-            }
-
-            var casa = await _context.Casa
-                .FirstOrDefaultAsync(m => m.CasaID == id);
-            if (casa == null)
-            {
-                return NotFound();
-            }
-
-            return View(casa);
-        }
 
         // POST: Casa/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int ID)
         {
-            if (_context.Casa == null)
-            {
-                return Problem("Entity set 'NN_InmueblesContext.Casa'  is null.");
+            var casa = await _context.Casa.FindAsync(ID);
+            if(casa.Alquilada == true){
+                return RedirectToAction(nameof(Index));
             }
-            var casa = await _context.Casa.FindAsync(id);
-            if (casa != null)
+            if(casa.Eliminada == true)
             {
-                _context.Casa.Remove(casa);
+                return RedirectToAction(nameof(Index));
             }
-            
-            await _context.SaveChangesAsync();
+            if(casa != null)
+            {
+                var CasaAlquilada = (from a in _context.Alquiler where a.CasaID == ID select a).Count();
+                if(CasaAlquilada == 0)
+                {
+                    _context.Casa.Remove(casa);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    casa.Eliminada = true;
+                    casa.NombreCasa = casa.NombreCasa +  " ❌Eliminada❌";
+                    _context.Update(casa);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CasaExists(int id)
+        private bool CasaExists(int ID)
         {
-          return (_context.Casa?.Any(e => e.CasaID == id)).GetValueOrDefault();
+          return (_context.Casa?.Any(e => e.CasaID == ID)).GetValueOrDefault();
         }
     }
 }
