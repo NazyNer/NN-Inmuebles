@@ -74,7 +74,7 @@ namespace NN_Inmuebles.Controllers
 
         private bool DevolucionExists(int id)
         {
-          return (_context.Devolucion?.Any(e => e.DevolucionID == id)).GetValueOrDefault();
+            return (_context.Devolucion?.Any(e => e.DevolucionID == id)).GetValueOrDefault();
         }
     }
 }
